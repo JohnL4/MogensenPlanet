@@ -83,7 +83,7 @@ options:
 					  M = Mollweide
 					  S = Sinusoidal
 					  h = Heightfield (obsolete. Use -H option instead)
-                      i = Icosahedral
+                                          i = Icosahedral
 					  f = Find match, see below
 
 The order of the options is irrelevant, except that later options

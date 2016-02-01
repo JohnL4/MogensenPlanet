@@ -60,11 +60,11 @@ int debug = 0;
 
 int nonLinear = 0;
 
-char view;
+char view;                      /* Projection (Mercator, icosahedral ('i'), etc.) */
 
 int nocols = 65536;
 
-int rtable[65536], gtable[65536], btable[65536];
+int rtable[65536], gtable[65536], btable[65536]; /* r,g,b colors indexed by... (TODO) */
 
 /* Supported output file types:
     BMP - Windows Bit MaPs
@@ -121,8 +121,9 @@ double POW = 0.47;  /* power for distance function */
 
 int Depth; /* depth of subdivisions */
 double r1,r2,r3,r4; /* seeds */
-double longi,lat,scale;
-double vgrid, hgrid;
+double longi,lat,   /* Longitude, latitude of center of map, converted to radians from input of degrees */
+   scale;
+double vgrid, hgrid;            /* Gridlines every n degrees */
 
 int latic = 0; /* flag for latitude based colour */
 
@@ -136,7 +137,7 @@ int cl0[60][30]; /* search map */
 int do_outline = 0;  /* if 1, draw coastal outline */
 int do_bw = 0;       /* if 1, reduce map to black outline on white */
 int contourstep = 0; /* if >0, # of colour steps between contour lines */
-int *outx, *outy;
+int *outx, *outy;    /* Used in make_outline() */
 
 int doshade = 0;
 int shade;
@@ -145,7 +146,7 @@ double shade_angle = 150.0; /* angle of "light" on bumpmap */
 double shade_angle2 = 20.0; /* with daylight shading, these two are
 			       longitude/latitude */
 
-double cla, sla, clo, slo;
+double cla, sla, clo, slo;      /* sin and cosine of latitude and longitude */
 
 double rseed, increment = 0.0000001;
 
@@ -184,7 +185,7 @@ char **av;
   FILE *outfile, *colfile = NULL;
   char filename[256] = "planet-map";
   char colorsname[256] = "Olsson.col";
-  int do_file = 0;
+  int do_file = 0;              /* true if output is to file */
 
 
 #ifdef macintosh
@@ -257,11 +258,11 @@ char **av;
 		   if (strlen(av[i])>2)
 		     sscanf(av[i],"-E%d",&contourstep);
 		   break;
-	case 'B' : doshade = 1;
+	case 'B' : doshade = 1; /* bumpmap shading everywhere */
 		   break;
-	case 'b' : doshade = 2;
+	case 'b' : doshade = 2; /* bumpmap shading on land only */
 		   break;
-	case 'd' : doshade = 3;
+	case 'd' : doshade = 3; /* daylight shading (night-side will * be darker */
 		   break;
 	case 'P' : file_type = ppm;
 		   break;
@@ -275,24 +276,24 @@ char **av;
 		   break;
 	case 'p' : if (strlen(av[i])>2) view = av[i][2];
 	           else view = av[++i][0];
-	           switch (view) {
-		     case 'm' :
-		     case 'p' :
-		     case 'q' :
-		     case 's' :
-		     case 'o' :
-		     case 'g' :
-		     case 'a' :
-		     case 'c' :
-		     case 'M' :
-		     case 'S' :
-		     case 'i' :
-		     case 'f' : break;
-             case 'h' : file_type = heightfield; break;
-		     default: fprintf(stderr,"Unknown projection: %s\n",av[i]);
-			      print_error(do_file ? filename : "standard output",
-					 !do_file ? "" : file_ext(file_type));
-		   }
+                   switch (view) {
+                      case 'm' :
+                      case 'p' :
+                      case 'q' :
+                      case 's' :
+                      case 'o' :
+                      case 'g' :
+                      case 'a' :
+                      case 'c' :
+                      case 'M' :
+                      case 'S' :
+                      case 'i' :
+                      case 'f' : break;
+                      case 'h' : file_type = heightfield; break;
+                      default: fprintf(stderr,"Unknown projection: %s\n",av[i]);
+                         print_error(do_file ? filename : "standard output",
+                                     !do_file ? "" : file_ext(file_type));
+                   }
 		   break;
 	default: fprintf(stderr,"Unknown option: %s\n",av[i]);
 		 print_error(do_file ? filename : "standard output",
